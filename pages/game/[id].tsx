@@ -34,11 +34,17 @@ export default function Game() {
             type: data.items.item._attributes.type,
             thumbnail: data.items.item.thumbnail._text,
             image: data.items.item.image._text,
-            name: {
-              sortindex: data.items.item.name._attributes.sortindex,
-              type: data.items.item.name._attributes.type,
-              value: data.items.item.name._attributes.value,
-            },
+            name: Array.isArray(data.items.item.name)
+              ? data.items.item.name.map((item: Record<string, any>) => ({
+                  sortindex: item._attributes?.sortindex,
+                  type: item._attributes?.type,
+                  value: item._attributes?.value,
+                }))
+              : {
+                  sortindex: data.items.item.name._attributes?.sortindex,
+                  type: data.items.item.name._attributes?.type,
+                  value: data.items.item.name._attributes?.value,
+                },
             description: data.items.item.description._text,
             yearpublished: data.items.item.yearpublished._attributes.value,
             minplayers: data.items.item.minplayers._attributes.value,
@@ -58,14 +64,19 @@ export default function Game() {
     [data]
   );
 
-  console.log({ normalizedData });
+  console.log({ data });
 
   const linkKey = useId();
+  const nameKey = useId();
+
+  const name = Array.isArray(normalizedData?.name)
+    ? normalizedData?.name.find((item) => item.type === 'primary')?.value
+    : normalizedData?.name.value;
 
   return (
     <>
       <Head>
-        <title>{normalizedData?.name.value}</title>
+        <title>{name}</title>
       </Head>
       <Flex as="main" flex="1" direction="column" gap="4">
         {isLoading ? <Loading /> : null}
@@ -80,11 +91,25 @@ export default function Game() {
             marginBottom="8"
           >
             <Heading as="h1" size="2xl" textAlign="center" paddingTop="4">
-              {normalizedData.name.value}
+              {name}
             </Heading>
+            {Array.isArray(normalizedData.name) ? (
+              <>
+                <Heading as="h4" size="md">
+                  Alternate names
+                </Heading>
+                <UnorderedList>
+                  {normalizedData.name
+                    .filter((item) => item.type !== 'primary')
+                    .map((item, i) => (
+                      <ListItem key={nameKey + i}>{item.value}</ListItem>
+                    ))}
+                </UnorderedList>
+              </>
+            ) : null}
             <Image
               src={normalizedData.image}
-              alt={normalizedData.name.value}
+              alt={name ?? ''}
               width={800}
               height={800}
             />

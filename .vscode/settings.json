@@ -1,0 +1,9 @@
+{
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "typescript.suggest.autoImports": true,
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true
+}

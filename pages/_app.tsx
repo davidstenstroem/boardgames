@@ -2,6 +2,7 @@ import type { AppProps } from 'next/app';
 import { SWRConfig } from 'swr';
 import { fetcher } from '@/utils/fetcher';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
+import { Analytics } from '@vercel/analytics/react';
 
 export default function App({ Component, pageProps }: AppProps) {
   const theme = extendTheme({
@@ -19,6 +20,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <SWRConfig value={{ fetcher }}>
       <ChakraProvider theme={theme}>
         <Component {...pageProps} />
+        <Analytics />
       </ChakraProvider>
     </SWRConfig>
   );
